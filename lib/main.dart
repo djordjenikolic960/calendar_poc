@@ -58,10 +58,59 @@ class _MyHomePageState extends State<MyHomePage> {
             daysOfWeekStyle: DaysOfWeekStyle(
               dowTextFormatter: (date, locale) => date.narrowDayOfWeek,
             ),
+            startingDayOfWeek: StartingDayOfWeek.monday,
             availableGestures: AvailableGestures.none,
             firstDay: firstDay,
             lastDay: lastDay,
             focusedDay: firstDay,
+            enabledDayPredicate: (day) {
+              // Disable weekend days (Saturday & Sunday)
+              if (day.weekday == DateTime.saturday ||
+                  day.weekday == DateTime.sunday) {
+                return false;
+              }
+              return true;
+            },
+            calendarBuilders: CalendarBuilders(
+              // Customize style and appearance for disabled days
+              disabledBuilder: (context, day, focusedDay) {
+                if (day.weekday == DateTime.saturday) {
+                  return Center(
+                    child: Text(
+                      day.day.toString(),
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                }
+                if (day.weekday == DateTime.sunday) {
+                  return Center(
+                    child: Text(
+                      day.day.toString(),
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                }
+                return null;
+              },
+              defaultBuilder: (context, day, focusedDay) {
+                // Customize style and appearance for default days
+                return Center(
+                  child: Text(
+                    day.day.toString(),
+                    style: TextStyle(
+                      color: Colors.green,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                );
+              },
+            ),
             selectedDayPredicate: (day) => _selectedDays.contains(day),
             onDaySelected: (selectedDay, focusedDay) {
               setState(() {
